@@ -1,0 +1,126 @@
+
+body {
+    margin: 0 auto;
+    font-size: 14px;
+}
+
+#layout {
+    background: #ccc;
+    margin: 10px auto;
+    width: 600px;
+}
+
+#toolbar {
+    border-top: 1px solid;
+    margin-top: 10px;
+}
+
+#layout ul {
+    list-style: none;
+    margin-left: -30px;
+}
+
+#layout ul li {
+    margin: 10px;
+}
+
+.tetrisButton {
+    width: 100px;
+}
+
+.headline {
+    font-size : 32px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+}
+
+#left-operate ul li {
+    margin: 30px 10px;
+}
+
+#right-operate ul li {
+    margin: 30px 10px;
+}
+
+#stat {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    padding-bottom: 10px;
+}
+
+#keyboard {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+#game-about {
+    border-bottom: 1px solid;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+
+#game-area {
+    background:	#fff;
+    overflow: hidden;
+    position: relative;
+}
+
+#next-block {
+    position: relative;
+    height: 80;
+    width: 200;
+}
+
+.game-over {
+    position: absolute;
+    top: 40%;
+    left: 20%;
+    font-size: 32px;
+    color: red;
+    z-index: 200;
+}
+
+.grid {
+    background:	#f4efe9;
+    position: absolute;
+    top: 0;
+    z-index: 10;
+}
+
+.block {
+    border:	0.5px solid #ffffff;
+    position: absolute;
+    z-index: 100;
+}
+
+.type0 {
+    background:	#38C44F;
+}
+
+.type1 {
+    background:	#38C44F;
+}
+
+.type2 {
+    background:	#FFAC1C;
+}
+
+.type3 {
+    background:	#FF6600;
+}
+
+.type4 {
+    background:	#CC54C4;
+}
+
+.type5 {
+    background:	#999;
+}
+
+.type6 {
+    background:	#F00;
+}
+

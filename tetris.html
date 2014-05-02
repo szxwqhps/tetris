@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tetris</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+    <link rel="stylesheet" href="tetris.css">
+</head>
+<body>
+<div id="layout">
+    <div class="pure-g">
+        <div class="pure-u-1-4">
+            <span class="headline">JS Tetris </span>
+            <div id="toolbar">
+                <ul>
+                    <li><button class="pure-button tetrisButton" id="newGame">New Game</button></li>
+                    <li><button class="pure-button tetrisButton" id="pauseGame">Pause</button></li>
+                    <li><button class="pure-button tetrisButton" id="highscore">High Score</button></li>
+                    <li><button class="pure-button tetrisButton" id="about">About</button></li>
+                </ul>
+            </div>
+            <div id="keyboard">
+                <ul>
+                    <li><img src="key-up.gif"> : Rotate</li>
+                    <li><img src="key-left.gif"> : Move Left</li>
+                    <li><img src="key-right.gif"> : Move Right</li>
+                    <li><img src="key-down.gif"> : Move Down</li>
+                </ul>
+            </div>
+            <div id="left-operate">
+                <ul>
+                    <li><button class="pure-button tetrisButton" id="rotate">Rotate</button></li>
+                    <li><button class="pure-button tetrisButton" id="moveDown">Move Down</button></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="pure-u-1-2">
+            <div id="main">
+                <div id="game-area"></div>
+            </div>
+        </div>
+
+        <div class="pure-u-1-4">
+            <div>
+                <div id="next-block"></div>
+            </div>
+            <div id="stat">
+                <ul>
+                    <li><span id="score">score: 0</span></li>
+                    <li><span id="lines">lines: 0</span></li>
+                    <li><span id="level">level: 0</span></li>
+                    <li><span id="amp">amp: 0</span></li>
+                    <li><span id="time">time: 0</span></li>
+                </ul>
+            </div>
+            <div id="game-about">
+                <ul>
+                    <li>Author: szxwqhps</li>
+                    <li>Version: 0.0.1</li>
+                    <li>Description: just an example of yqf</li>
+                </ul>
+            </div>
+            <div id="right-operate">
+                <ul>
+                    <li><button class="pure-button tetrisButton" id="moveLeft">Move Left</button></li>
+                    <li><button class="pure-button tetrisButton" id="moveRight">Move Right</button></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="http://yui.yahooapis.com/3.16.0/build/yui/yui-min.js"></script>
+<script>
+    YUI({
+        modules: {
+            'tetris': {
+                fullpath: 'tetris.js',
+                requires: ['node', 'yqf']
+            },
+            'yqf': {
+                fullpath: 'yqf.js',
+                requires: ['base']
+            }
+        }
+    }).use('tetris', function(Y) {
+        var tetris = Y.tetris.tetris,
+                gameOn = false,
+                gameArea = Y.one('#game-area'),
+                nextBlockElement = Y.one('#next-block'),
+                scoreElement = Y.one('#score'),
+                linesElement = Y.one('#lines'),
+                levelElement = Y.one('#level'),
+                ampElement = Y.one('#amp'),
+                timeElement = Y.one('#time');
+
+        var createGrid = function() {
+            var i = 0,
+                    grid = null,
+                    gridCount = Math.floor(tetris.areaColumn / 2),
+                    gridWidth = tetris.blockWidth + 1,
+                    areaWidth = (tetris.blockWidth + 1) * tetris.areaColumn,
+                    areaHeight =(tetris.blockHeight + 1) * tetris.areaRow;
+
+
+            gameArea.setStyle('width', areaWidth);
+            gameArea.setStyle('height', areaHeight);
+
+            for (i = 0; i < gridCount; i++) {
+                grid = Y.Node.create('<div class="grid"></div>');
+                gameArea.insert(grid);
+                grid.setStyle('left', (i * 2 + 1) * gridWidth);
+                grid.setStyle('width', gridWidth);
+                grid.setStyle('height', areaHeight);
+            }
+        };
+
+        var setupGame = function() {
+            var eventName = (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress';
+
+            Y.yqf.QF.init(2);
+
+            tetris.init(gameArea, nextBlockElement, 25, 14, 20, 8);
+
+            createGrid();
+            nextBlockElement.setStyle('width', 200);  // 200px fixed
+            nextBlockElement.setStyle('height', 3 * (tetris.blockHeight + 1));
+            Y.one('#pauseGame').set('disabled', 'disabled');
+
+            Y.on(tetris.eventTypes.UPDATE_STAT_SIG, function(e) {
+                scoreElement.setHTML('score: ' + e.score);
+                linesElement.setHTML('lines: ' + e.lines);
+                levelElement.setHTML('level: ' + e.level);
+            });
+
+            Y.on(tetris.eventTypes.UPDATE_TIME_SIG, function(e) {
+                var seconds = Math.floor(e.time / 1000),
+                        h = Math.floor(seconds / 3600),
+                        m = Math.floor((seconds % 3600) / 60),
+                        s = seconds % 60;
+
+                if (h > 0) {
+                    timeElement.setHTML('time: ' + h + 'H: ' + m + 'M: ' + s + 'S');
+                } else {
+                    timeElement.setHTML('time: ' + m + 'M: ' + s + 'S');
+                }
+                ampElement.setHTML('amp: ' + e.amp);
+            });
+
+            Y.on(eventName, function(e) {
+                tetris.onKeyDown(e.keyCode);
+            });
+
+            Y.one('#rotate').on('click', function() {
+                tetris.onKeyDown(38);   //up
+            });
+
+            Y.one('#moveDown').on('click', function() {
+                tetris.onKeyDown(40);   //down
+            });
+
+            Y.one('#moveLeft').on('click', function() {
+                tetris.onKeyDown(37);   //left
+            });
+
+            Y.one('#moveRight').on('click', function() {
+                tetris.onKeyDown(39);   //right
+            });
+
+            Y.one('#newGame').on('click', function() {
+                tetris.newGame();
+                scoreElement.setHTML('score: 0');
+                linesElement.setHTML('lines: 0');
+                levelElement.setHTML('level: 0');
+                ampElement.setHTML('amp: 0');
+                timeElement.setHTML('time: 0');
+                gameOn = true;
+                Y.one('#pauseGame').set('disabled', '');
+            });
+
+            Y.one('#pauseGame').on('click', function() {
+                if (gameOn) {
+                    gameOn = false;
+                    tetris.pauseGame();
+                    Y.one('#pauseGame').set('text', 'Resume');
+                } else {
+                    gameOn = true;
+                    tetris.resumeGame();
+                    Y.one('#pauseGame').set('text', 'Pause');
+                }
+            });
+
+            Y.yqf.QF.run();
+        };
+
+        console.log('here');
+        setupGame();
+    });
+</script>
+</body>
+</html>
